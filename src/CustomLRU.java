@@ -31,10 +31,14 @@ public class CustomLRU<K, V> {
 	public CustomLRU(int numItems) {
 		map = new ConcurrentHashMap<>();
 		System.out.println("INstantiated");
-		this.numItems=numItems;
+		this.numItems = numItems;
 	}
 
 	public void put(K key, V value) {
+		if (map == null) {
+			System.out.println("map is null");
+			return;
+		}
 		Entry e = new Entry(key, value);
 		map.put(e.key, e);
 		offer(e);

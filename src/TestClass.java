@@ -3,7 +3,7 @@ public class TestClass {
 
 	public static void main(String args[]) {
 		final CustomLRU<Integer, String> cache = new CustomLRU<Integer,String>(100);
-	
+	cache.put(1, "asd");
 		Thread t1 = new Thread(new Runnable() {
 
 			@Override
