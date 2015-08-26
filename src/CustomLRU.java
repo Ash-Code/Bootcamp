@@ -21,7 +21,6 @@ public class CustomLRU<K, V> {
 		Node(Entry entry) {
 			this.entry = entry;
 		}
-
 	}
 
 	private ConcurrentHashMap<K, Entry> map;
@@ -30,7 +29,8 @@ public class CustomLRU<K, V> {
 	private Node tail;
 
 	public CustomLRU(int numItems) {
-		map = new ConcurrentHashMap<K, Entry>(10000);
+		map = new ConcurrentHashMap<>();
+		System.out.println("INstantiated");
 		this.numItems=numItems;
 	}
 
@@ -64,8 +64,6 @@ public class CustomLRU<K, V> {
 	}
 
 	private void offer(Entry e) {
-		// manipulate the linkedlist
-		// Assign tail, check etc
 		if (head != null) {
 			if (head.entry != e) {
 				Node c = e.node;
@@ -78,11 +76,9 @@ public class CustomLRU<K, V> {
 					}
 				}
 			}
-
 		} else {
 			addToHead(new Node(e));
 		}
-
 	}
 
 	private void removeNode(Node c) {
@@ -106,5 +102,4 @@ public class CustomLRU<K, V> {
 		head.prev = n;
 		head = n;
 	}
-
 }
