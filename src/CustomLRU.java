@@ -8,6 +8,7 @@ public class CustomLRU<K, V> {
 		Node node;
 
 		Entry(K key, V value) {
+			this.key = key;
 			this.value = value;
 		}
 
@@ -35,28 +36,26 @@ public class CustomLRU<K, V> {
 	}
 
 	public void put(K key, V value) {
-		if (map == null) {
-			System.out.println("map is null");
-			return;
-		}
 		Entry e = new Entry(key, value);
 		map.put(e.key, e);
 		offer(e);
+		purge();
 	}
 
 	public V get(K key) {
 		if (map.containsKey(key)) {
 			Entry e = map.get(key);
 			offer(e);
-			purge();
 			return e.value;
 		}
 		return null;
 	}
 
 	private void purge() {
+
 		while (map.size() > numItems) {
 			if (tail != null) {
+				// System.out.println("Tail is not null");
 				map.remove(tail.entry.key);
 				tail = tail.prev;
 				tail.next = null;
@@ -68,24 +67,28 @@ public class CustomLRU<K, V> {
 	}
 
 	private void offer(Entry e) {
-		if (head != null) {
-			if (head.entry != e) {
-				Node c = e.node;
-				Node node = new Node(e);
-				AtomicReference<Node> ref = new AtomicReference<Node>(e.node);
-				if (ref.compareAndSet(c, node)) {
-					addToHead(node);
-					if (c != null) {
-						removeNode(c);
-					}
+
+		if (head == null || head.entry != e) {
+			Node c = e.node;
+			Node node = new Node(e);
+			AtomicReference<Node> ref = new AtomicReference<Node>(e.node);
+			if (ref.compareAndSet(c, node)) {
+				addToHead(node);
+				if (c != null) {
+					removeNode(c);
 				}
 			}
-		} else {
-			addToHead(new Node(e));
 		}
+
 	}
 
 	private void removeNode(Node c) {
+		if (c == tail) {
+			tail = tail.next;
+			if (tail != null)
+				tail.prev = null;
+			return;
+		}
 		if (c.prev != null) {
 			c.prev.next = c.next;
 		}
